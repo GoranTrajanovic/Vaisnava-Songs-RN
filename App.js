@@ -1,15 +1,40 @@
 import React, { Fragment, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
 import * as songs from './songs/all/all';
 import { baseStyling } from './styles/songStyles';
+
+import Songs from './components/Songs';
+import Authors from './components/Authors';
+import Themes from './components/Themes';
 
 export default function App() {
 
   let [activeSong, setActiveSong] = useState('');
   let [songStyling, setSongStyling] = useState('');
   let [songHTML, setSongHTML] = useState('');
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'all', title: 'all' },
+    { key: 'byAuthor', title: 'By Author' },
+    { key: 'byTheme', title: 'By Theme' },
+  ]);
+
+  const songList = ['Bhaja_bhakata_vatsala', 'Bajahuremana'];
+  const authorList = ['Sri Govinda Das Kaviraj', 'Bhaktivinoda Thākura'];
+  const themeList = ['Arati', 'Life'];
+
+  const allSongsRoute = () => <Songs songList={songList} />;
+  const songsByAuthorRoute = () => <Authors authorList={authorList} />;
+  const songsByThemeRoute = () => <Themes themeList={themeList} />;
+
+  const renderScene = SceneMap({
+    all: allSongsRoute,
+    byAuthor: songsByAuthorRoute,
+    byTheme: songsByThemeRoute
+  });
 
   const handlePress = pressedSong => {
     setActiveSong(pressedSong);
@@ -29,30 +54,13 @@ export default function App() {
 
 
   return (
-    <Fragment>
-      <View style={styles.container}>
-        {/* <Text onPress={handlePress}>{songs.Nrsimha_pranama.HTML}</Text> */}
-        <TouchableOpacity style={styles.touchable} onPress={handlePress.bind(null, "Bhaja_bhakata_vatsala")}>
-          <Text>Bhaja_bhakata_vatsala</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.touchable} onPress={handlePress.bind(null, "Bajahuremana")}>
-          <Text>Bajahuremana</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleColorPress.bind(null, "red")} style={[styles.touchable, { color: "red" }]}><Text>Red</Text></TouchableOpacity>
-        <TouchableOpacity onPress={handleColorPress.bind(null, "blue")} style={[styles.touchable, { color: "blue" }]}><Text>Blue</Text></TouchableOpacity>
-        <TouchableOpacity onPress={handleColorPress.bind(null, "orange")} style={[styles.touchable, { color: "orange" }]}><Text>Orange</Text></TouchableOpacity>
-        <View style={styles.verticalAlign}>
-          <TouchableOpacity onPress={handleFontSizePress.bind(null, 1.2)} style={styles.touchable}><Text>a</Text></TouchableOpacity>
-          <TouchableOpacity onPress={handleFontSizePress.bind(null, 1.8)} style={styles.touchable}><Text>A</Text></TouchableOpacity>
-        </View>
-      </View>
-      <WebView
-        originWhitelist={['*']}
-        source={{ html: songHTML }}
-        scalesPageToFit={(Platform.OS === 'ios') ? false : true}
-        styles={styles.webView}
-      />
-    </Fragment>
+    <TabView 
+      navigationState={{ index, routes }}
+      renderScene={ renderScene }
+      onIndexChange={ setIndex }
+      initialLayout={{ width: Dimensions.get('window').width }}
+      style={{flex: 1, height: 200}}
+    />
   );
 }
 
