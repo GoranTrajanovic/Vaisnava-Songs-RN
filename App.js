@@ -1,13 +1,64 @@
 import React, { Fragment, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { WebView } from 'react-native-webview';
 
 import * as songs from './songs/all/all';
 import { baseStyling } from './styles/songStyles';
 
-import Songs from './components/Songs';
+// import Songs from './components/Songs';
 import Authors from './components/Authors';
 import Themes from './components/Themes';
+
+const Stack = createStackNavigator();
+
+const songList = ['Bhaja_bhakata_vatsala', 'Bajahuremana'];
+const authorList = ['Sri Govinda Das Kaviraj', 'Bhaktivinoda Thākura'];
+const themeList = ['Arati', 'Life'];
+
+const selectedSong = ({ route, navigation }) => {
+  return (
+    <WebView
+      originWhitelist={['*']}
+      source={{ html: route.params.HTML }}
+      scalesPageToFit={(Platform.OS === 'ios') ? false : true}
+      styles={[ styles.webView, styles.fullScreen ]}
+    />
+  )
+};
+
+const allSongs = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      {songList.map(song => (
+        <TouchableOpacity
+          key={song}
+          style={styles.touchable}
+          onPress={() => {
+            navigation.navigate('Selected Song', { title: song, HTML: songs[song].HTML })
+          }}>
+          <Text>{song}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  )
+};
+
+const Songs = props => {
+  return (
+    <Fragment>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="All Songs">
+          <Stack.Screen name="All Songs" component={allSongs} options={{ headerShown: false }}/>
+          <Stack.Screen name="Selected Song" component={selectedSong} options={({ route }) => ({ title: route.params.title, mode: 'modal' })} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Fragment>
+  );
+};
+
 
 export default function App() {
 
@@ -22,9 +73,6 @@ export default function App() {
     { key: 'byTheme', title: 'By Theme' },
   ]);
 
-  const songList = ['Bhaja_bhakata_vatsala', 'Bajahuremana'];
-  const authorList = ['Sri Govinda Das Kaviraj', 'Bhaktivinoda Thākura'];
-  const themeList = ['Arati', 'Life'];
 
   const allSongsRoute = () => <Songs songList={songList} />;
   const songsByAuthorRoute = () => <Authors authorList={authorList} />;
@@ -54,12 +102,12 @@ export default function App() {
 
 
   return (
-    <TabView 
+    <TabView
       navigationState={{ index, routes }}
-      renderScene={ renderScene }
-      onIndexChange={ setIndex }
+      renderScene={renderScene}
+      onIndexChange={setIndex}
       initialLayout={{ width: Dimensions.get('window').width }}
-      style={{flex: 1, height: 200}}
+      style={{ flex: 1, height: 200 }}
     />
   );
 }
@@ -88,5 +136,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "80%",
     margin: "auto"
+  },
+  fullScreen: {
+    width: Dimensions.get('window').width, 
+    height: Dimensions.get('window').height 
   }
 });
