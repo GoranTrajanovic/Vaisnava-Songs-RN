@@ -9,7 +9,7 @@ import * as songs from './../songs/all/all';
 
 const Stack = createStackNavigator();
 
-const songList = ['Bhaja_bhakata_vatsala', 'Bajahuremana'];
+const historyList = ['Bajahuremana'];
 
 const selectedSong = ({ route }) => {
   return (
@@ -22,10 +22,10 @@ const selectedSong = ({ route }) => {
   )
 };
 
-const allSongs = ({ navigation }) => {
+const historySongs = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      {songList.map(song => (
+      {historyList.map(song => (
         <TouchableOpacity
           key={song}
           style={styles.touchable}
@@ -39,11 +39,11 @@ const allSongs = ({ navigation }) => {
   )
 };
 
-const Songs = props => {
+const History = props => {
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="All Songs">
-          <Stack.Screen name="All Songs" component={allSongs} options={{ headerShown: false }} />
+        <Stack.Navigator initialRouteName="History Songs">
+          <Stack.Screen name="History Songs" component={historySongs} options={{ headerShown: false }} />
           <Stack.Screen name="Selected Song" component={selectedSong} options={({ route }) => ({ title: route.params.title })} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Songs;
+export default History;

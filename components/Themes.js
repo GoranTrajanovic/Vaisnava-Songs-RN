@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 
+const themeList = ['Arati', 'Life'];
+
 
 const Themes = props => {
     return (
         <View style={styles.container}>
             {props.themeList.map(theme => (
-                <TouchableOpacity style={styles.touchable}><Text>{theme}</Text></TouchableOpacity>
+                <TouchableOpacity key={theme} style={styles.touchable}><Text>{theme}</Text></TouchableOpacity>
             ))}
         </View>
     );
