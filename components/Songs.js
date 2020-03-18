@@ -39,7 +39,7 @@ const allSongs = ({ navigation }) => {
   )
 };
 
-const Songs = props => {
+const Songs = () => {
   return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="All Songs">
